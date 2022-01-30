@@ -6,10 +6,13 @@
 //
 
 import UIKit
+import Foundation
 
 class ViewController: UIViewController {
     var total = 0.00
-    var stepperVal = 0.00;
+    var stepperVal = 0.00
+    var rounded = false
+    var temp = 0.00
     
     
     @IBOutlet weak var billAmountTextField: UITextField!
@@ -21,6 +24,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var partySize: UILabel!
     @IBOutlet weak var splitLabel: UILabel!
     @IBOutlet weak var splitAmount: UILabel!
+    @IBOutlet weak var roundUp: UISwitch!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,15 +41,24 @@ class ViewController: UIViewController {
             tipPercentages[tipControl.selectedSegmentIndex]
         total = bill + tip
         
-        // Update Tip Amount Label
         tipAmountLabel.text = String(format: "$%.2f", tip)
-        // Update Total Amount
-        totalLabel.text = String(format: "$%.2f", total)
-        if (stepperVal == 0.00) {
-            splitAmount.text = "$0.00"
+        if (rounded) {
+            totalLabel.text = String(format: "$%.2f", round(total))
+            if (stepperVal == 0.00) {
+                splitAmount.text = "$0.00"
+            }
+            else {
+                splitAmount.text = String(format: "$%.2f", (round(total/stepperVal)))
+            }
         }
         else {
-            splitAmount.text = String(format: "$%.2f", (total/stepperVal))
+            totalLabel.text = String(format: "$%.2f", total)
+            if (stepperVal == 0.00) {
+                splitAmount.text = "$0.00"
+            }
+            else {
+                splitAmount.text = String(format: "$%.2f", (total/stepperVal))
+            }
         }
     }
     
@@ -53,12 +66,43 @@ class ViewController: UIViewController {
     @IBAction func partySizeAdjust(_ sender: UIStepper) {
         partySize.text = Int(sender.value).description
         stepperVal = Double(sender.value)
+        
         if (stepperVal == 0.00) {
             splitAmount.text = "$0.00"
         }
         else {
-            splitAmount.text = String(format: "$%.2f", (total/stepperVal))
+            if (rounded) {
+                splitAmount.text = String(format: "$%.2f", (round(total/stepperVal)))
+            }
+            else {
+                splitAmount.text = String(format: "$%.2f", (total/stepperVal))
+            }
         }
     }
+    
+    @IBAction func roundUpAction(_ sender: UISwitch) {
+        if (sender.isOn) {
+            temp = round(total)
+            totalLabel.text = String(format: "$%.2f", temp)
+            if (stepperVal == 0.00) {
+                splitAmount.text = "$0.00"
+            }
+            else {
+                splitAmount.text = String(format: "$%.2f", (temp/stepperVal))
+            }
+            rounded = true;
+        }
+        else {
+            totalLabel.text = String(format: "$%.2f", total)
+            if (stepperVal == 0.00) {
+                splitAmount.text = "$0.00"
+            }
+            else {
+                splitAmount.text = String(format: "$%.2f", (total/stepperVal))
+            }
+            rounded = false
+        }
+    }
+    
 }
 
