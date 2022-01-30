@@ -8,15 +8,19 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    var total = 0.00
+    var stepperVal = 0.00;
+    
     
     @IBOutlet weak var billAmountTextField: UITextField!
-    
     @IBOutlet weak var tipControl: UISegmentedControl!
-    
     @IBOutlet weak var tipAmountLabel: UILabel!
-    
     @IBOutlet weak var totalLabel: UILabel!
+    @IBOutlet weak var partSizeLabel: UILabel!
+    @IBOutlet weak var partySizeIncrement: UIStepper!
+    @IBOutlet weak var partySize: UILabel!
+    @IBOutlet weak var splitLabel: UILabel!
+    @IBOutlet weak var splitAmount: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,13 +35,30 @@ class ViewController: UIViewController {
         let tipPercentages = [0.15, 0.18, 0.2]
         let tip = bill *
             tipPercentages[tipControl.selectedSegmentIndex]
-        let total = bill + tip
+        total = bill + tip
         
         // Update Tip Amount Label
         tipAmountLabel.text = String(format: "$%.2f", tip)
         // Update Total Amount
         totalLabel.text = String(format: "$%.2f", total)
+        if (stepperVal == 0.00) {
+            splitAmount.text = "$0.00"
+        }
+        else {
+            splitAmount.text = String(format: "$%.2f", (total/stepperVal))
+        }
     }
     
+    
+    @IBAction func partySizeAdjust(_ sender: UIStepper) {
+        partySize.text = Int(sender.value).description
+        stepperVal = Double(sender.value)
+        if (stepperVal == 0.00) {
+            splitAmount.text = "$0.00"
+        }
+        else {
+            splitAmount.text = String(format: "$%.2f", (total/stepperVal))
+        }
+    }
 }
 
